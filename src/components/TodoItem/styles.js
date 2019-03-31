@@ -15,5 +15,10 @@ export const Item = styled.div`
             display: inline-block;
         }
     }
+    @media(max-width: 499px){
+        .delete{
+            display: inline-block;
+        }
+    }
 
 `;

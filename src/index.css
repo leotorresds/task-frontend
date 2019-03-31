@@ -7,3 +7,7 @@ body {
   background-color: #002b36;
   font-family: 'Acme', sans-serif;
 }
+
+.m-20{
+  margin: 20px;
+}
