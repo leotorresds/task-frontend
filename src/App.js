@@ -1,13 +1,27 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component, useState } from 'react';
+import { Container, Box, Title } from './styles';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-      </div>
-    );
-  }
-}
+import Login from './components/Login';
+import TodoItem from './components/TodoItem';
+
+
+const App = () => {
+
+  const [title, setTitle] = useState('Login');
+  const [isLogged, setIsLogged] = useState(false);
+  const authCheck = () => {
+    return isLogged ? <TodoItem /> : <Login />;
+  };
+
+
+  return (
+    <Container>
+      <Title>{title}</Title>
+      <Box>
+        {authCheck()}
+      </Box>
+    </Container>
+  );
+};
 
 export default App;
