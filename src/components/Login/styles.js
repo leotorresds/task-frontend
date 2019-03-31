@@ -24,6 +24,5 @@ export const Button = styled.button`
 
     &:hover{
         background-color: ${props => props.hover ? props.hover : '#073642'}; 
-
     }
 `;

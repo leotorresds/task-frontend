@@ -1,13 +1,13 @@
 import React from 'react';
 import { LoginForm, Input, Button } from './styles';
 
-const Login = () => {
+const Login = (props) => {
     return (
         <LoginForm>
-            Login <Input type='text' />
+            Login <Input value={props.email} onChange={props.handleEmail} type='text' />
 
-            Senha <Input type='password' />
-            <Button>Entrar</Button>
+            Senha <Input value={props.password} onChange={props.handlePassword} type='password' />
+            <Button onClick={props.attemptLogin}>Entrar</Button>
             <a href="#" onClick={() => alert("Cadastrado")}>Cadastre-se</a>
         </LoginForm>
     );
