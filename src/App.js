@@ -5,6 +5,7 @@ import { Container, Box, Title } from './styles';
 import Login from './components/Login';
 import TodoItem from './components/TodoItem';
 import Register from './components/Register';
+import CreateItens from './components/CreateItens';
 
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [loginToken, setLoginToken] = useState(localStorage.getItem('token'));
   const [tasks, setTasks] = useState(null);
+  const [taskToCreate, setTaskToCreate] = useState('');
   const [onResgiter, setOnRegister] = useState(false);
 
   const handleEmailInput = (e) => {
@@ -29,6 +31,11 @@ const App = () => {
     setName(e.target.value);
   }
 
+
+  const handleTaskToCreate = (e) => {
+    setTaskToCreate(e.target.value);
+  }
+
   const login = async () => {
     try {
       const response = await axios.post("http://lt-task.herokuapp.com/users/login", { email, password });
@@ -36,8 +43,24 @@ const App = () => {
 
       setLoginToken(token);
       localStorage.setItem("token", token);
+      // Clear login data
+      setEmail('');
+      setPassword('');
     } catch (e) {
       alert("Login ou senha incorretos, tente novamente!");
+    }
+
+  }
+
+  const logout = async () => {
+    try {
+      await axios.post("http://lt-task.herokuapp.com/users/logout", {}, { headers: { "Authorization": `Bearer ${loginToken}` } });
+
+      setLoginToken(undefined);
+      setTitle("Login");
+      localStorage.removeItem("token");
+    } catch (e) {
+      alert("Erro ao fazer logout");
     }
 
   }
@@ -54,6 +77,11 @@ const App = () => {
 
       setLoginToken(token);
       localStorage.setItem("token", token);
+
+      // Clear register data
+      setEmail('');
+      setPassword('');
+      setName('');
     } catch (e) {
       alert("Preencha todos os dados");
     }
@@ -98,6 +126,23 @@ const App = () => {
     }
   };
 
+  const createTask = async () => {
+    try {
+      await axios.post("http://lt-task.herokuapp.com/tasks/", { description: taskToCreate, completed: false }, { headers: { "Authorization": `Bearer ${loginToken}` } });
+      getTasks();
+
+    } catch (e) {
+      alert("Ocorreu um erro ao salva a tarefa");
+    }
+  };
+
+  const handleTaskKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      createTask();
+      setTaskToCreate('');
+    }
+  };
+
   useEffect(() => {
     if (loginToken) {
       setTitle("Tasks");
@@ -111,9 +156,15 @@ const App = () => {
     if (loginToken) {
       if (tasks) {
         if (tasks.length > 0) {
-          return tasks.map(task => {
-            return <TodoItem key={task._id} description={task.description} completed={task.completed} id={task._id} deleteClick={deleteTask} checkTask={updateTask} />
-          });
+          return (
+            <>
+              <CreateItens task={taskToCreate} handleTask={handleTaskToCreate} taskKeyPress={handleTaskKeyPress} />
+              {tasks.map(task => {
+                return <TodoItem key={task._id} description={task.description} completed={task.completed} id={task._id} deleteClick={deleteTask} checkTask={updateTask} />
+              })}
+              <a style={{ margin: "20px" }} href="#" onClick={logout}>Sair</a>
+            </>
+          );
         }
         return <span className="m-20">Você não possuí nenhuma tarefa ainda</span>;
       }
